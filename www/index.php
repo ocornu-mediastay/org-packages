@@ -20,19 +20,19 @@ if(file_exists($compiledFilePath)) {
     $deduplicatePackages=array();
     $packages=array();
     foreach($projects as $project => $projectPackages) {
-        foreach($projectPackages as $package) {
-            if(!isset($packages[$package])){
-                $packages[$package]=array($project);
+        foreach($projectPackages as $packageName => $packageData) {
+            if(!isset($packages[$packageName])){
+                $packages[$packageName]=array($project);
             } else {
-                $packages[$package][]=$project;
+                $packages[$packageName][]=$project;
             }
-            if(!in_array($package,$deduplicatePackages)){
-                $deduplicatePackages[]=$package;
+            if(!isset($deduplicatePackages[$packageName])){
+                $deduplicatePackages[$packageName]=$packageData;
             }
         }
     }
     ksort($packages);
-    sort($deduplicatePackages);
+    ksort($deduplicatePackages);
 
     echo $twig->render('main.twig',array(
         'deduplicatePackages'=>$deduplicatePackages,

@@ -25,12 +25,14 @@ class OrganizationProjects extends Command\Command
     {
         $authenticationToken = $input->getArgument('token');
         $organization = $input->getArgument('organization');
-        $outputConfigFile = __DIR__ . '/../../../compiled/projects.inc.php';
+        $outputConfigFile = __DIR__ . '/../../../../compiled/projects.inc.php';
 
-        $client = new \Github\Client();
-        $client->authenticate($authenticationToken, \Github\Client::AUTH_HTTP_TOKEN);
+        $github = new \Github\Client();
+        $github->authenticate($authenticationToken, \Github\Client::AUTH_HTTP_TOKEN);
 
-        $repositories = $client->api('organization')->repositories($organization);
+        $packagist = new \Packagist\Api\Client();
+
+        $repositories = $github->api('organization')->repositories($organization);
 
         $text = 'retrieving ' . count($repositories) . ' projects from ' . $organization . ' organization' . "\n";
 
@@ -40,12 +42,22 @@ class OrganizationProjects extends Command\Command
 
             $text .= 'scanning ' . $project . '... ';
             try {
-                $content = $client->api('repository')->contents()->download($organization, $project, 'composer.json');
+                $content = $github->api('repository')->contents()->download($organization, $project, 'composer.json');
                 $json_data = json_decode($content);
                 $projects[$project] = array();
-                foreach ($json_data->require as $component => $version) {
-                    if ('php' != $component) {
-                        $projects[$project][] = $component;
+                foreach ($json_data->require as $packageName => $version) {
+                    if ('php' != $packageName) {
+                        try {
+                            $package=$packagist->get($packageName);
+                            $version = array_pop($package->getVersions());
+                            $packageData = array(
+                                'description' => $package->getDescription(),
+                                'homepage' => $version->getHomepage(),
+                            );
+                            $projects[$project][$packageName] = $packageData;
+                        } catch(\Guzzle\Http\Exception\ClientErrorResponseException $e){
+                            //nothing
+                        }
                     }
                 }
                 $text .= 'adding projects';

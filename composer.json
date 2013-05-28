@@ -10,6 +10,7 @@
     "name": "org-packages",
     "require": {
         "knplabs/github-api": "1.2.*@dev",
+        "knplabs/packagist-api": "0.1.*@dev",
         "symfony/console": "v2.3.0-RC1",
         "twig/twig": "1.12.3"
     },

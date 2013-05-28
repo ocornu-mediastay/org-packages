@@ -12,3 +12,8 @@
 #accordion {
     clear:both;
 }
+
+.package-name {
+    font-weight:bold;
+    color:#FFBA53;
+}
