@@ -10,14 +10,14 @@ class OrganizationProjects extends Command\Command
             ->setName('org:packages')
             ->setDescription('Retrieve packages and projects from organization')
             ->addArgument(
-                'organization (name of organization in GitHub)',
+                'organization',
                 Input\InputArgument::REQUIRED,
-                'missing valid organization'
+                'name of organization in GitHub to retrieve packages from'
             )
             ->addArgument(
-                'token (valid application token)',
+                'token',
                 Input\InputArgument::REQUIRED,
-                'missing valid application token'
+                'valid application token'
             );
     }
 
