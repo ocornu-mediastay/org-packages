@@ -16,10 +16,10 @@
                 <h2>All packages found</h2>
                 <ul>
                     {% for package, packageData in deduplicatePackages %}
-                        <li>
-                            <span class="package-name">{{ package }}</span>
-                            <a href="https://packagist.org/packages/{{ package }}"><img alt="get it on packagist" src="img/packagist.svg" /></a>
+                        <li class="package">
                             <a href="{{ packageData.homepage }}"><img alt="homepage" src="img/homepage.svg" /></a>
+                            <a href="https://packagist.org/packages/{{ package }}"><img alt="get it on packagist" src="img/packagist.svg" /></a>
+                            <span class="package-name">{{ package }}</span>
                             <span class="package-description">({{ packageData.description }})</span>
                         </li>
                     {% endfor %}

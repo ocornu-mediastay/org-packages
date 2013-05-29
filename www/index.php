@@ -7,7 +7,7 @@ date_default_timezone_set('Europe/Paris');
 $loader = new Twig_Loader_Filesystem(__DIR__ . '/../resources/views');
 $twig = new Twig_Environment($loader, array(
     'auto_reload' => true,
-    'cache' => __DIR__ . '/../../compiled/views/cache',
+    'cache' => __DIR__ . '/../compiled/views/cache',
 ));
 
 $compiledFilePath = __DIR__. '/../compiled/projects.inc.php';

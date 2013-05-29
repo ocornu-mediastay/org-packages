@@ -1,3 +1,7 @@
+body {
+    background-color:grey;
+}
+
 .lastUpdate {
     font-size:14px;
     color:grey;
@@ -13,7 +17,17 @@
     clear:both;
 }
 
+#accordion ul {
+    background-color:lightgrey;
+}
+
+.package {
+    border-bottom:dotted 1px #7FA243;
+    margin-bottom:8px;
+}
+
 .package-name {
     font-weight:bold;
-    color:#FFBA53;
+    color:#7FA243;
 }
+
