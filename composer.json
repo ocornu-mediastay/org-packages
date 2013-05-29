@@ -8,8 +8,14 @@
         }
     },
     "name": "org-packages",
+    "repositories": [
+        {
+            "type": "vcs",
+            "url": "https://github.com/fmagnan/php-github-api"
+        }
+    ],
     "require": {
-        "knplabs/github-api": "1.2.*@dev",
+        "knplabs/github-api": "dev-master",
         "knplabs/packagist-api": "0.1.*@dev",
         "symfony/console": "v2.3.0-RC1",
         "twig/twig": "1.12.3"
