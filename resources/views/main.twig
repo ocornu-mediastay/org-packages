@@ -1,67 +1,70 @@
 <!DOCTYPE html>
 <html>
-    <head>
-        <meta charset="UTF-8" />
-        <title>composer packages</title>
-        <link rel="shortcut icon" href="/favicon.ico" />
-        <link rel="stylesheet" href="http://code.jquery.com/ui/1.10.3/themes/smoothness/jquery-ui.css" />
-        <link rel="stylesheet" href="css/main.css" />
-    </head>
-    <body>
-        {% block content %}
-            <div class="lastUpdate">
-                last update: {{ lastModifiedTime|date("l d F Y - H:i:s") }}
-            </div>
-            <div id="accordion">
-                <h2>All packages found</h2>
-                <ul>
-                    {% for package, packageData in deduplicatePackages %}
-                        <li class="package">
-                            <a href="{{ packageData.homepage }}"><img alt="homepage" src="img/homepage.svg" /></a>
-                            <a href="https://packagist.org/packages/{{ package }}"><img alt="get it on packagist" src="img/packagist.svg" /></a>
-                            <span class="package-name">{{ package }}</span>
-                            <span class="package-description">({{ packageData.description }})</span>
-                        </li>
-                    {% endfor %}
-                </ul>
-                <h2>Packages by project</h2>
-                <ul>
-                    {% for project, packagesInside in projects %}
-                        <li>
-                            {{ project }}
-                                <ul>
-                                    {% for package, packageData in packagesInside %}
-                                        <li>{{ package }}</li>
-                                    {%  endfor %}
-                                </ul>
-                        </li>
-                    {% endfor %}
-                </ul>
-                <h2>Projects by package</h2>
-                <ul>
-                    {% for package, projectsUsingIt in packages %}
-                        <li>
-                            {{ package }}
-                            <ul>
-                                {% for project in projectsUsingIt %}
-                                    <li>{{ project }}</li>
-                                {%  endfor %}
-                            </ul>
-                        </li>
-                    {% endfor %}
-                </ul>
-            </div>
-            <script src="http://code.jquery.com/jquery-1.9.1.js"></script>
-            <script src="http://code.jquery.com/ui/1.10.3/jquery-ui.js"></script>
-            <script>
-                $(function() {
-                    $( "#accordion" ).accordion({
-                            active: false,
-                            collapsible: true,
-                            heightStyle: "content"
-                    });
-                });
-            </script>
-        {% endblock %}
-    </body>
+<head>
+    <meta charset="UTF-8"/>
+    <title>composer packages</title>
+    <link rel="shortcut icon" href="/favicon.ico"/>
+    <link rel="stylesheet" href="http://code.jquery.com/ui/1.10.3/themes/smoothness/jquery-ui.css"/>
+    <link rel="stylesheet" href="css/main.css"/>
+</head>
+<body>
+{% block content %}
+    <div class="info">
+        last update: {{ lastModifiedTime|date("l d F Y - H:i:s") }}
+        <ul>
+            <li><a href="#all-packages">all packages</a></li>
+            <li><a href="#packages-by-project">packages by project</a></li>
+            <li><a href="#projects-by-package">projects by package</a></li>
+        </ul>
+    </div>
+    <a name="all-packages"><h2>All packages found</h2></a>
+    <table>
+        <thead>
+            <tr>
+                <th>Package</th>
+                <th>Description</th>
+                <th>Home page</th>
+                <th>Packagist</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for package, packageData in deduplicatePackages %}
+            <tr class="package">
+                <td class="package-name">{{ package }}</td>
+                <td class="package-description">{{ packageData.description }}</td>
+                <td>
+                    <a href="{{ packageData.homepage }}">
+                        <img alt="homepage" src="img/homepage.svg"/>
+                    </a>
+                </td>
+                <td>
+                    <a href="https://packagist.org/packages/{{ package }}">
+                        <img alt="get it on packagist" src="img/packagist.svg"/>
+                    </a>
+                </td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+    <ul>
+
+    </ul>
+    <a name="packages-by-project"><h2>Packages by project</h2></a>
+    <ul>
+        {% for project, packagesInside in projects %}
+            <li>
+                <span class="package-name">{{ project }}</span> ({{ packagesInside|keys|join(', ') }})
+            </li>
+        {% endfor %}
+    </ul>
+    <a name="projects-by-package"><h2>Projects by package</h2></a>
+    <ul>
+        {% for package, projectsUsingIt in packages %}
+            <li>
+                <span class="package-name">{{ package }}</span> ({{ projectsUsingIt|join(', ') }})
+            </li>
+        {% endfor %}
+    </ul>
+{% endblock %}
+</body>
 </html>
