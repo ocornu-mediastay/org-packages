@@ -14,7 +14,7 @@
     <div id="content" class="container">
         <a name="all-packages"></a>
         <table class="table table-striped table-hover">
-            <caption>All packages found</caption>
+            <caption>All packages used in all {{ organization }} projects</caption>
             <thead>
                 <tr>
                     <th>Package</th>
@@ -29,9 +29,13 @@
                     <td class="package-name">{{ package }}</td>
                     <td class="package-description">{{ packageData.description }}</td>
                     <td>
-                        <a href="{{ packageData.homepage }}">
-                            <img alt="homepage" src="img/homepage.svg"/>
-                        </a>
+                        {% if packageData.homepage is empty %}
+                            <span>none</span>
+                        {% else %}
+                            <a href="{{ packageData.homepage }}">
+                                <img alt="homepage" src="img/homepage.svg"/>
+                            </a>
+                        {% endif %}
                     </td>
                     <td>
                         <a href="https://packagist.org/packages/{{ package }}">
@@ -46,14 +50,9 @@
         {% set sectionVars = {'name': 'packages-by-project', 'label': 'Packages by project', 'items': projects} %}
         {% include 'section.twig' with sectionVars %}
 
-        <a name="projects-by-package"><h2>Projects by package</h2></a>
-        <ul>
-            {% for package, projectsUsingIt in packages %}
-                <li>
-                    <span class="item-name">{{ package }}</span> ({{ projectsUsingIt|join(', ') }})
-                </li>
-            {% endfor %}
-        </ul>
+        {% set sectionVars = {'name': 'projects-by-package', 'label': 'Projects by package', 'items': packages} %}
+        {% include 'section.twig' with sectionVars %}
+
     </div>
 {% endblock %}
 {% include 'footer.twig' %}

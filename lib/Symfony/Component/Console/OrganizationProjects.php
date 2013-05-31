@@ -16,7 +16,7 @@ class OrganizationProjects extends Command\Command
             )
             ->addArgument(
                 'token',
-                Input\InputArgument::REQUIRED,
+                Input\InputArgument::OPTIONAL,
                 'valid application token'
             );
     }
@@ -28,8 +28,9 @@ class OrganizationProjects extends Command\Command
         $outputConfigFile = __DIR__ . '/../../../../compiled/projects.inc.php';
 
         $github = new \Github\Client();
-        $github->authenticate($authenticationToken, \Github\Client::AUTH_HTTP_TOKEN);
-
+        if(!empty($authenticationToken)){
+            $github->authenticate($authenticationToken, \Github\Client::AUTH_HTTP_TOKEN);
+        }
         $packagist = new \Packagist\Api\Client();
 
         $repositories = $github->api('organization')->repositories($organization);
@@ -67,7 +68,11 @@ class OrganizationProjects extends Command\Command
             $text .= "\n";
         }
 
-        $fileContents = '<?php return ' . trim(var_export($projects, true)) . ';';
+        $data=array(
+            'projects'=>$projects,
+            'organization'=>$organization
+        );
+        $fileContents = '<?php return ' . trim(var_export($data, true)) . ';';
 
         file_put_contents($outputConfigFile, $fileContents);
 

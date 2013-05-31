@@ -14,17 +14,19 @@ $compiledFilePath = __DIR__. '/../compiled/projects.inc.php';
 
 if(file_exists($compiledFilePath)) {
     $lastModifiedTime=filemtime($compiledFilePath);
-    $projects = include $compiledFilePath;
-    ksort($projects);
+    $data = include $compiledFilePath;
 
     $deduplicatePackages=array();
     $packages=array();
+    $projects=$data['projects'];
+    $organization=$data['organization'];
     foreach($projects as $project => $projectPackages) {
+        $projectUrl='https://github.com/'.$organization.'/'.$project;
         foreach($projectPackages as $packageName => $packageData) {
             if(!isset($packages[$packageName])){
-                $packages[$packageName]=array($project);
+                $packages[$packageName]=array($project=>$projectUrl);
             } else {
-                $packages[$packageName][]=$project;
+                $packages[$packageName][$project]=$projectUrl;
             }
             if(!isset($deduplicatePackages[$packageName])){
                 $deduplicatePackages[$packageName]=$packageData;
@@ -38,7 +40,8 @@ if(file_exists($compiledFilePath)) {
         'deduplicatePackages'=>$deduplicatePackages,
         'lastModifiedTime'=>$lastModifiedTime,
         'packages'=>$packages,
-        'projects'=>$projects
+        'projects'=>$projects,
+        'organization'=>ucfirst($organization)
     ));
 } else {
     echo $twig->render('error.twig',array());
