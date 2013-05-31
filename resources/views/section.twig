@@ -1,0 +1,10 @@
+<a name="{{ name }}"></a>
+<h2>{{ label }}</h2>
+{% for key, value in items %}
+    {% if value is not empty %}
+        <fieldset>
+            <legend class="item-name">{{ key }}</legend>
+            {{ value|keys|join(', ') }}
+        </fieldset>
+    {% endif %}
+{% endfor %}

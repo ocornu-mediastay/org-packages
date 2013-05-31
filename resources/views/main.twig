@@ -4,21 +4,24 @@
     <meta charset="UTF-8"/>
     <title>composer packages</title>
     <link rel="shortcut icon" href="/favicon.ico"/>
-    <link rel="stylesheet" href="http://code.jquery.com/ui/1.10.3/themes/smoothness/jquery-ui.css"/>
+    <link rel="stylesheet" href="css/reset.css"/>
     <link rel="stylesheet" href="css/main.css"/>
 </head>
 <body>
 {% block content %}
     <div class="info">
-        last update: {{ lastModifiedTime|date("l d F Y - H:i:s") }}
+        last update:<br />
+        {{ lastModifiedTime|date("l d F Y") }}<br/>
+        {{ lastModifiedTime|date("H:i:s") }}
         <ul>
             <li><a href="#all-packages">all packages</a></li>
             <li><a href="#packages-by-project">packages by project</a></li>
             <li><a href="#projects-by-package">projects by package</a></li>
         </ul>
     </div>
-    <a name="all-packages"><h2>All packages found</h2></a>
+    <a name="all-packages"></a>
     <table>
+        <caption>All packages found</caption>
         <thead>
             <tr>
                 <th>Package</th>
@@ -46,22 +49,17 @@
         {% endfor %}
         </tbody>
     </table>
-    <ul>
 
-    </ul>
-    <a name="packages-by-project"><h2>Packages by project</h2></a>
-    <ul>
-        {% for project, packagesInside in projects %}
-            <li>
-                <span class="package-name">{{ project }}</span> ({{ packagesInside|keys|join(', ') }})
-            </li>
-        {% endfor %}
-    </ul>
+
+    {% set sectionVars = {'name': 'packages-by-project', 'label': 'Packages by project', 'items': projects} %}
+    {% include 'section.twig' with sectionVars %}
+
+
     <a name="projects-by-package"><h2>Projects by package</h2></a>
     <ul>
         {% for package, projectsUsingIt in packages %}
             <li>
-                <span class="package-name">{{ package }}</span> ({{ projectsUsingIt|join(', ') }})
+                <span class="item-name">{{ package }}</span> ({{ projectsUsingIt|join(', ') }})
             </li>
         {% endfor %}
     </ul>

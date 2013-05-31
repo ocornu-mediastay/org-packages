@@ -1,5 +1,5 @@
 body {
-    background: url(../img/texture.png) repeat scroll 0 0;
+    background: url(../img/texture.png) repeat scroll 0 0 #999;
 }
 
 .info {
@@ -9,20 +9,23 @@ body {
     font-style:italic;
     border:1px solid grey;
     padding:8px;
-    width:400px;
+    width:15%;
     position:fixed;
-    right:20px;
-    top:20px;
+    right:5px;
+    top:5px;
+}
+
+table {
+    border:1px solid darkmagenta;
+    width:80%;
 }
 
 .package {
-    border-bottom:dotted 1px #7FA243;
-    margin-bottom:8px;
 }
 
-.package-name {
+.item-name {
     font-weight:bold;
-    color:#7FA243;
+    color:darkblue;
 }
 
 ul {
