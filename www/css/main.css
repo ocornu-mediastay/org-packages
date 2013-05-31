@@ -1,37 +1,3 @@
-body {
-    background: url(../img/texture.png) repeat scroll 0 0 #999;
-}
-
-.info {
-    background-color:lightgrey;
-    font-size:14px;
-    color:grey;
-    font-style:italic;
-    border:1px solid grey;
-    padding:8px;
-    width:15%;
-    position:fixed;
-    right:5px;
-    top:5px;
-}
-
-table {
-    border:1px solid darkmagenta;
-    width:80%;
-}
-
-.package {
-}
-
-.item-name {
-    font-weight:bold;
-    color:darkblue;
-}
-
-ul {
-    list-style-type: none;
-}
-
-ul li {
-    padding-bottom: 10px;
+#content {
+    margin-top:50px;
 }
