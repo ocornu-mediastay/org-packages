@@ -12,7 +12,7 @@
 {% include 'header.twig' %}
 {% block content %}
     <div id="content" class="container">
-        <a class="target" name="all-packages"></a>
+        <a class="target" name="all-packages" id="all-packages"></a>
         <table class="table table-striped table-hover">
             <caption>All packages used in all {{ organization }} projects</caption>
             <thead>
@@ -29,7 +29,7 @@
                 {% if directory[package] is not empty %}
                     <tr class="package">
                         <td class="package-name">
-                            <a class="target" name="{{ package }}"></a>
+                            <a class="target" name="{{ package }}" id="{{ package }}"></a>
                             {{ package }}
                         </td>
                         <td class="package-description">{{ directory[package].description }}</td>
@@ -62,7 +62,7 @@
             </tbody>
         </table>
 
-        <a class="target" name="packages-by-project"></a>
+        <a class="target" name="packages-by-project" id="packages-by-project"></a>
         <h2>Packages by project</h2>
         {% for projectName, projectPackages in projects %}
             {% if projectPackages is not empty %}
@@ -79,7 +79,7 @@
             {% endif %}
         {% endfor %}
 
-        <a class="target" name="projects-by-package"></a>
+        <a class="target" name="projects-by-package" id="projects-by-package"></a>
         <h2>Projects by package</h2>
         {% for packageName, packageProjects in packages %}
             {% if packageProjects is not empty %}
