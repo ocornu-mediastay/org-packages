@@ -19,30 +19,42 @@
                 <tr>
                     <th>Package</th>
                     <th>Description</th>
-                    <th>Home page</th>
+                    <th>Home</th>
+                    <th>GitHub</th>
                     <th>Packagist</th>
                 </tr>
             </thead>
             <tbody>
-            {% for package, packageData in deduplicatePackages %}
-                <tr class="package">
-                    <td class="package-name">{{ package }}</td>
-                    <td class="package-description">{{ packageData.description }}</td>
-                    <td>
-                        {% if packageData.homepage is empty %}
-                            <span>none</span>
-                        {% else %}
-                            <a href="{{ packageData.homepage }}">
-                                <img alt="homepage" src="img/homepage.svg"/>
+            {% for package in packages|keys %}
+                {% if directory[package] is not empty %}
+                    <tr class="package">
+                        <td class="package-name">{{ package }}</td>
+                        <td class="package-description">{{ directory[package].description }}</td>
+                        <td>
+                            {% if directory[package].homepageUrl is empty %}
+                                <span>none</span>
+                            {% else %}
+                                <a href="{{ directory[package].homepageUrl }}">
+                                    <img alt="homepage" src="img/homepage.svg"/>
+                                </a>
+                            {% endif %}
+                        </td>
+                        <td>
+                            {% if directory[package].githubUrl is empty %}
+                                <span>none</span>
+                            {% else %}
+                                <a href="{{ directory[package].githubUrl }}">
+                                    <img alt="homepage" src="img/GitHub-Mark-32px.png"/>
+                                </a>
+                            {% endif %}
+                        </td>
+                        <td>
+                            <a href="https://packagist.org/packages/{{ package }}">
+                                <img alt="get it on packagist" src="img/packagist.svg"/>
                             </a>
-                        {% endif %}
-                    </td>
-                    <td>
-                        <a href="https://packagist.org/packages/{{ package }}">
-                            <img alt="get it on packagist" src="img/packagist.svg"/>
-                        </a>
-                    </td>
-                </tr>
+                        </td>
+                    </tr>
+                {% endif %}
             {% endfor %}
             </tbody>
         </table>

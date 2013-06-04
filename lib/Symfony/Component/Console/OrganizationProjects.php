@@ -7,7 +7,7 @@ class OrganizationProjects extends Command\Command
 
     protected $outputFilePath;
 
-    public function __construct($outputFilePath,$name=null)
+    public function __construct($outputFilePath, $name = null)
     {
         $this->outputFilePath = $outputFilePath;
         parent::__construct($name);
@@ -30,10 +30,18 @@ class OrganizationProjects extends Command\Command
             );
     }
 
-    protected function getInfoFromPackagist($packageName)
+    protected function startsWith($haystack, $needle)
     {
-        if ('php' == $packageName) {
+        return !strncmp($haystack, $needle, strlen($needle));
+    }
+
+    protected function getInfoFromPackagist($packageName, $organization)
+    {
+        if (strpos($packageName, '/') === false) {
             return array();
+        }
+        if ($this->startsWith($packageName, $organization)) {
+            return array('githubUrl' => 'https://github.com/' . $packageName);
         }
         try {
             $packagist = new \Packagist\Api\Client();
@@ -52,16 +60,22 @@ class OrganizationProjects extends Command\Command
         }
     }
 
-    protected function buildDirectory(array $projects)
+    protected function buildDirectory(array $projects, $organization)
     {
         $directory = array();
         foreach ($projects as $main => $dependencies) {
             if (!isset($directory[$main])) {
-                $directory[$main] = $this->getInfoFromPackagist($main);
+                $info=$this->getInfoFromPackagist($main, $organization);
+                if(!empty($info)){
+                    $directory[$main] = $info;
+                }
             }
             foreach ($dependencies as $dependency) {
                 if (!isset($directory[$dependency])) {
-                    $directory[$dependency] = $this->getInfoFromPackagist($dependency);
+                    $info=$this->getInfoFromPackagist($dependency, $organization);
+                    if(!empty($info)){
+                        $directory[$dependency] = $info;
+                    }
                 }
             }
         }
@@ -89,7 +103,11 @@ class OrganizationProjects extends Command\Command
 
             $text .= 'scanning ' . $repositoryName . '... ';
             try {
-                $composerJsonContent = $github->api('repository')->contents()->download($organization, $repositoryName, 'composer.json');
+                $composerJsonContent = $github->api('repository')->contents()->download(
+                    $organization,
+                    $repositoryName,
+                    'composer.json'
+                );
                 $composerJsonData = json_decode($composerJsonContent);
                 $projects[$organization . '/' . $repositoryName] = array_keys((array)$composerJsonData->require);
                 $text .= 'adding projects';
@@ -104,7 +122,7 @@ class OrganizationProjects extends Command\Command
         $output->writeln($text);
 
         $data = array(
-            'directory' => $this->buildDirectory($projects),
+            'directory' => $this->buildDirectory($projects, $organization),
             'organization' => $organization,
             'projects' => $projects,
         );
