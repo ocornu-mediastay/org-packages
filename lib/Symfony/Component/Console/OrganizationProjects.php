@@ -4,6 +4,15 @@ namespace Symfony\Component\Console;
 
 class OrganizationProjects extends Command\Command
 {
+
+    protected $outputFilePath;
+
+    public function __construct($outputFilePath,$name=null)
+    {
+        $this->outputFilePath = $outputFilePath;
+        parent::__construct($name);
+    }
+
     protected function configure()
     {
         $this
@@ -21,62 +30,88 @@ class OrganizationProjects extends Command\Command
             );
     }
 
+    protected function getInfoFromPackagist($packageName)
+    {
+        if ('php' == $packageName) {
+            return array();
+        }
+        try {
+            $packagist = new \Packagist\Api\Client();
+            $package = $packagist->get($packageName);
+            $version = array_pop($package->getVersions());
+            $source = $version->getSource();
+            $packageData = array(
+                'description' => $package->getDescription(),
+                'homepageUrl' => $version->getHomepage(),
+                'packagistUrl' => 'https://packagist.org/packages/' . $packageName,
+                'githubUrl' => $source->getUrl()
+            );
+            return $packageData;
+        } catch (\Guzzle\Http\Exception\ClientErrorResponseException $e) {
+            return array();
+        }
+    }
+
+    protected function buildDirectory(array $projects)
+    {
+        $directory = array();
+        foreach ($projects as $main => $dependencies) {
+            if (!isset($directory[$main])) {
+                $directory[$main] = $this->getInfoFromPackagist($main);
+            }
+            foreach ($dependencies as $dependency) {
+                if (!isset($directory[$dependency])) {
+                    $directory[$dependency] = $this->getInfoFromPackagist($dependency);
+                }
+            }
+        }
+
+        return $directory;
+    }
+
     protected function execute(Input\InputInterface $input, Output\OutputInterface $output)
     {
         $authenticationToken = $input->getArgument('token');
         $organization = $input->getArgument('organization');
-        $outputConfigFile = __DIR__ . '/../../../../compiled/projects.inc.php';
 
         $github = new \Github\Client();
-        if(!empty($authenticationToken)){
+        if (!empty($authenticationToken)) {
             $github->authenticate($authenticationToken, \Github\Client::AUTH_HTTP_TOKEN);
         }
-        $packagist = new \Packagist\Api\Client();
 
         $repositories = $github->api('organization')->repositories($organization);
 
-        $text = 'retrieving ' . count($repositories) . ' projects from ' . $organization . ' organization' . "\n";
+        $text = 'retrieving ' . count($repositories) . ' projects from ' . $organization . ' organization' . PHP_EOL;
 
         $projects = array();
         foreach ($repositories as $repository) {
-            $project = $repository['name'];
+            $repositoryName = $repository['name'];
 
-            $text .= 'scanning ' . $project . '... ';
+            $text .= 'scanning ' . $repositoryName . '... ';
             try {
-                $content = $github->api('repository')->contents()->download($organization, $project, 'composer.json');
-                $json_data = json_decode($content);
-                $projects[$project] = array();
-                foreach ($json_data->require as $packageName => $version) {
-                    if ('php' != $packageName) {
-                        try {
-                            $package=$packagist->get($packageName);
-                            $version = array_pop($package->getVersions());
-                            $packageData = array(
-                                'description' => $package->getDescription(),
-                                'homepage' => $version->getHomepage(),
-                            );
-                            $projects[$project][$packageName] = $packageData;
-                        } catch(\Guzzle\Http\Exception\ClientErrorResponseException $e){
-                            //nothing
-                        }
-                    }
-                }
+                $composerJsonContent = $github->api('repository')->contents()->download($organization, $repositoryName, 'composer.json');
+                $composerJsonData = json_decode($composerJsonContent);
+                $projects[$organization . '/' . $repositoryName] = array_keys((array)$composerJsonData->require);
                 $text .= 'adding projects';
             } catch (\Github\Exception\RuntimeException $e) {
                 $text .= 'composer.json file not found';
             }
-            $text .= "\n";
+            $text .= PHP_EOL;
         }
 
-        $data=array(
-            'projects'=>$projects,
-            'organization'=>$organization
-        );
-        $fileContents = '<?php return ' . trim(var_export($data, true)) . ';';
-
-        file_put_contents($outputConfigFile, $fileContents);
+        $text .= 'building directory ' . PHP_EOL;
 
         $output->writeln($text);
+
+        $data = array(
+            'directory' => $this->buildDirectory($projects),
+            'organization' => $organization,
+            'projects' => $projects,
+        );
+
+        $fileContents = '<?php return ' . trim(var_export($data, true)) . ';';
+
+        file_put_contents($this->outputFilePath, $fileContents);
     }
 
 }
