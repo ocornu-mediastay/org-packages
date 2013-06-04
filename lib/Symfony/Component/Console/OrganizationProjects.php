@@ -35,47 +35,18 @@ class OrganizationProjects extends Command\Command
         return !strncmp($haystack, $needle, strlen($needle));
     }
 
-    protected function getInfoFromPackagist($packageName, $organization)
-    {
-        if (strpos($packageName, '/') === false) {
-            return array();
-        }
-        if ($this->startsWith($packageName, $organization)) {
-            return array('githubUrl' => 'https://github.com/' . $packageName);
-        }
-        try {
-            $packagist = new \Packagist\Api\Client();
-            $package = $packagist->get($packageName);
-            $version = array_pop($package->getVersions());
-            $source = $version->getSource();
-            $packageData = array(
-                'description' => $package->getDescription(),
-                'homepageUrl' => $version->getHomepage(),
-                'packagistUrl' => 'https://packagist.org/packages/' . $packageName,
-                'githubUrl' => $source->getUrl()
-            );
-            return $packageData;
-        } catch (\Guzzle\Http\Exception\ClientErrorResponseException $e) {
-            return array();
-        }
-    }
-
     protected function buildDirectory(array $projects, $organization)
     {
         $directory = array();
         foreach ($projects as $main => $dependencies) {
             if (!isset($directory[$main])) {
-                $info=$this->getInfoFromPackagist($main, $organization);
-                if(!empty($info)){
-                    $directory[$main] = $info;
-                }
+                $info = $this->getInfoFromPackagist($main, $organization);
+                $directory[$main] = $info;
             }
             foreach ($dependencies as $dependency) {
                 if (!isset($directory[$dependency])) {
-                    $info=$this->getInfoFromPackagist($dependency, $organization);
-                    if(!empty($info)){
-                        $directory[$dependency] = $info;
-                    }
+                    $info = $this->getInfoFromPackagist($dependency, $organization);
+                    $directory[$dependency] = $info;
                 }
             }
         }
@@ -109,7 +80,12 @@ class OrganizationProjects extends Command\Command
                     'composer.json'
                 );
                 $composerJsonData = json_decode($composerJsonContent);
-                $projects[$organization . '/' . $repositoryName] = array_keys((array)$composerJsonData->require);
+                $dependencies = array_keys((array)$composerJsonData->require);
+                foreach ($dependencies as $dependency) {
+                    if ('php' != $dependency) {
+                        $projects[$organization . '/' . $repositoryName][] = $dependency;
+                    }
+                }
                 $text .= 'adding projects';
             } catch (\Github\Exception\RuntimeException $e) {
                 $text .= 'composer.json file not found';
@@ -130,6 +106,28 @@ class OrganizationProjects extends Command\Command
         $fileContents = '<?php return ' . trim(var_export($data, true)) . ';';
 
         file_put_contents($this->outputFilePath, $fileContents);
+    }
+
+    protected function getInfoFromPackagist($packageName, $organization)
+    {
+        if ($this->startsWith($packageName, $organization)) {
+            return array('githubUrl' => 'https://github.com/' . $packageName);
+        }
+        try {
+            $packagist = new \Packagist\Api\Client();
+            $package = $packagist->get($packageName);
+            $version = array_pop($package->getVersions());
+            $source = $version->getSource();
+            $packageData = array(
+                'description' => $package->getDescription(),
+                'homepageUrl' => $version->getHomepage(),
+                'packagistUrl' => 'https://packagist.org/packages/' . $packageName,
+                'githubUrl' => $source->getUrl()
+            );
+            return $packageData;
+        } catch (\Guzzle\Http\Exception\ClientErrorResponseException $e) {
+            return array();
+        }
     }
 
 }
