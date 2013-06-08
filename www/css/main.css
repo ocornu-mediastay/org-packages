@@ -1,17 +1,10 @@
 a,a:hover {
-    color:#33BB1E;
+    color:#4183C4;
 }
 
-legend a, legend a:hover {
-    color:#1B7F0B;
-}
-
-.target {
-    border-top:50px solid transparent;
-    margin-top:-50px;
-    -webkit-background-clip:padding-box;
-    -moz-background-clip:padding;
-    background-clip:padding-box;
+a.internal, a.internal:hover {
+    color:#DD872F;
+    font-weight:bold;
 }
 
 #content {
@@ -20,4 +13,16 @@ legend a, legend a:hover {
 
 .last-update {
     font-style: italic;
+    position: fixed;
+    width:180px;
+    top:15px;
+    left:15px;
+}
+
+caption {
+    border-top:1px solid #DDDDDD;
+    border-bottom:1px solid #DDDDDD;
+    font-weight:bold;
+    background:#666666;
+
 }

@@ -1,24 +1,12 @@
 <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
-<script src="js/jquery.nav.min.js"></script>
-<script src="js/jquery.scrollTo.js"></script>
 <script src="js/bootstrap.min.js"></script>
 <script>
-    $('.smooth-scrolling').onePageNav({
-        currentClass: 'current',
-        changeHash: false,
-        scrollSpeed: 750,
-        scrollOffset: 30,
-        scrollThreshold: 0.5,
-        filter: '',
-        easing: 'swing',
-        begin: function() {
-            //I get fired when the animation is starting
-        },
-        end: function() {
-            //I get fired when the animation is ending
-        },
-        scrollChange: function($currentListItem) {
-            //I get fired when you enter a section and I pass the list item of the section
-        }
+    $('a[href^="#"]').click(function(){
+        var the_id = $(this).attr("href");
+        console.log(the_id);
+        $('html, body').animate({
+            scrollTop:$(the_id).offset().top
+        }, 'slow');
+        return false;
     });
 </script>

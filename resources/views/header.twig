@@ -1,4 +1,9 @@
-<div class="navbar navbar-fixed-top">
+<div class="last-update">
+    last update<br />
+    {{ lastModifiedTime|date("l d F Y") }}<br />
+    {{ lastModifiedTime|date("H:i:s") }}
+</div>
+<div class="navbar navbar-fixed-bottom">
     <div class="navbar-inner">
         <div class="container">
             <a data-target=".nav-collapse" data-toggle="collapse" class="btn btn-navbar">
@@ -8,12 +13,11 @@
             </a>
             <a name="top" class="brand">{{ organization }}</a>
             <div class="nav-collapse collapse">
-                <ul class="smooth-scrolling nav">
+                <ul class="nav">
                     <li><a href="#all-packages">all packages</a></li>
                     <li><a href="#packages-by-project">packages by project</a></li>
                     <li><a href="#projects-by-package">projects by package</a></li>
                 </ul>
-                <span class="pull-right last-update">updated on {{ lastModifiedTime|date("l d F Y - H:i:s") }}</span>
             </div>
         </div>
     </div>
