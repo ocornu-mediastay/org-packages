@@ -1,4 +1,4 @@
-<div class="last-update">
+<div class="last-update info">
     last update<br />
     {{ lastModifiedTime|date("l d F Y") }}<br />
     {{ lastModifiedTime|date("H:i:s") }}
@@ -12,13 +12,18 @@
                 <span class="icon-bar"></span>
             </a>
             <a name="top" class="brand">{{ organization }}</a>
-            <div class="nav-collapse collapse">
-                <ul class="nav">
-                    <li><a href="#all-packages">all packages</a></li>
-                    <li><a href="#packages-by-project">packages by project</a></li>
-                    <li><a href="#projects-by-package">projects by package</a></li>
-                </ul>
-            </div>
+            {% if packages is not empty %}
+                <div class="nav-collapse collapse">
+                    <ul class="nav">
+                        <li><a href="#all-packages">all packages</a></li>
+                        <li><a href="#packages-by-project">packages by project</a></li>
+                        <li><a href="#projects-by-package">projects by package</a></li>
+                    </ul>
+                </div>
+            {% endif %}
         </div>
     </div>
 </div>
+<a href="https://github.com/fmagnan/org-packages">
+    <img class="github-ribbon" src="https://s3.amazonaws.com/github/ribbons/forkme_right_orange_ff7600.png" alt="Fork me on GitHub">
+</a>

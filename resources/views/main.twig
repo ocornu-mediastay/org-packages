@@ -12,88 +12,13 @@
 {% include 'header.twig' %}
 {% block content %}
     <div id="content" class="container">
-        <a id="all-packages"></a>
-        <table class="table table-striped">
-            <caption>All packages used in all {{ organization }} projects</caption>
-            <thead>
-                <tr>
-                    <th>Package</th>
-                    <th>Description</th>
-                    <th>Home</th>
-                    <th>GitHub</th>
-                    <th>Packagist</th>
-                </tr>
-            </thead>
-            <tbody>
-            {% for package in packages|keys %}
-                {% if directory[package] is not empty %}
-                    <tr class="package">
-                        <td class="package-name">
-                            <a class="internal" id="{{ package|replace({'/': '-'}) }}" href="#project-{{ package|replace({'/': '-'}) }}">{{ package }}</a>
-                        </td>
-                        <td class="package-description">{{ directory[package].description }}</td>
-                        <td>
-                            {% if directory[package].homepageUrl is empty %}
-                                <span>none</span>
-                            {% else %}
-                                <a href="{{ directory[package].homepageUrl }}">
-                                    <img alt="homepage" src="img/home.png"/>
-                                </a>
-                            {% endif %}
-                        </td>
-                        <td>
-                            {% if directory[package].githubUrl is empty %}
-                                <span>none</span>
-                            {% else %}
-                                <a href="{{ directory[package].githubUrl }}">
-                                    <img alt="homepage" src="img/github.png"/>
-                                </a>
-                            {% endif %}
-                        </td>
-                        <td>
-                            <a href="https://packagist.org/packages/{{ package }}">
-                                <img alt="get it on packagist" src="img/packagist.svg"/>
-                            </a>
-                        </td>
-                    </tr>
-                {% endif %}
-            {% endfor %}
-            </tbody>
-        </table>
-
-        <a id="packages-by-project"></a>
-        <h2>Packages by project</h2>
-        {% for projectName, projectPackages in projects %}
-            {% if projectPackages is not empty %}
-                <div class="well">
-                    <fieldset>
-                        <legend class="item-name">
-                            <a href="{{ directory[projectName].githubUrl }}">{{ projectName }}</a>
-                        </legend>
-                        {% for projectPackage in projectPackages %}
-                            <a class="internal" href="#{{ projectPackage|replace({'/': '-'}) }}">{{ projectPackage }}</a>{% if loop.index != projectPackages|length %}, {% endif %}
-                        {% endfor %}
-                    </fieldset>
-                </div>
-            {% endif %}
-        {% endfor %}
-
-        <a id="projects-by-package"></a>
-        <h2>Projects by package</h2>
-        {% for packageName, packageProjects in packages %}
-            {% if packageProjects is not empty %}
-                <div class="well">
-                    <fieldset>
-                        <legend class="item-name">
-                            <a class="internal" id="project-{{ packageName|replace({'/': '-'}) }}" href="#{{ packageName|replace({'/': '-'}) }}">{{ packageName }}</a>
-                        </legend>
-                        {% for packageProject in packageProjects %}
-                            <a href="{{ directory[packageProject].githubUrl }}">{{ packageProject }}</a>{% if loop.index != packageProjects|length %}, {% endif %}
-                        {% endfor %}
-                    </fieldset>
-                </div>
-            {% endif %}
-        {% endfor %}
+        {% if packages is empty %}
+            <div class="info">no packages found!</div>
+        {% else %}
+            {% include('all-packages.twig') %}
+            {% include('packages-by-project.twig') %}
+            {% include('projects-by-package.twig') %}
+        {% endif %}
     </div>
 {% endblock %}
 {% include 'footer.twig' %}

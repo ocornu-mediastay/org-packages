@@ -3,9 +3,10 @@
 require __DIR__ . '/../vendor/autoload.php';
 
 use Symfony\Component\Console\Application;
+use Symfony\Component\Console\OrganizationProjects;
 
 $outputConfigFile = __DIR__ . '/../compiled/projects.inc.php';
 
 $application = new Application();
-$application->add(new \Symfony\Component\Console\OrganizationProjects($outputConfigFile));
+$application->add(new OrganizationProjects($outputConfigFile));
 $projectsData = $application->run();

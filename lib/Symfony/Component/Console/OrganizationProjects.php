@@ -80,15 +80,17 @@ class OrganizationProjects extends Command\Command
                     'composer.json'
                 );
                 $composerJsonData = json_decode($composerJsonContent);
-                $dependencies = array_keys((array)$composerJsonData->require);
-                foreach ($dependencies as $dependency) {
-                    if ('php' != $dependency) {
-                        $projects[$organization . '/' . $repositoryName][] = $dependency;
+                if (property_exists($composerJsonData, 'require')) {
+                    $dependencies = array_keys((array)$composerJsonData->require);
+                    foreach ($dependencies as $dependency) {
+                        if ('php' != $dependency) {
+                            $projects[$organization . '/' . $repositoryName][] = $dependency;
+                        }
                     }
+                    $text .= 'adding projects';
                 }
-                $text .= 'adding projects';
             } catch (\Github\Exception\RuntimeException $e) {
-                $text .= 'composer.json file not found';
+                $text .= 'no "composer.json" file found!';
             }
             $text .= PHP_EOL;
         }

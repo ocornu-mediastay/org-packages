@@ -3,7 +3,7 @@ a,a:hover {
 }
 
 a.internal, a.internal:hover {
-    color:#DD872F;
+    color:#EF7600;
     font-weight:bold;
 }
 
@@ -11,8 +11,12 @@ a.internal, a.internal:hover {
     margin-top:50px;
 }
 
-.last-update {
+.info {
     font-style: italic;
+    text-align: center;
+}
+
+.last-update {
     position: fixed;
     width:180px;
     top:15px;
@@ -24,5 +28,11 @@ caption {
     border-bottom:1px solid #DDDDDD;
     font-weight:bold;
     background:#666666;
+}
 
+.github-ribbon {
+    position: absolute;
+    top: 0;
+    right: 0;
+    border: 0;
 }

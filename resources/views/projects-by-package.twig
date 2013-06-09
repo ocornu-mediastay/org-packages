@@ -1,0 +1,17 @@
+<h2 id="projects-by-package">Projects by package</h2>
+{% for packageName, packageProjects in packages %}
+    {% if packageProjects is not empty %}
+        <div class="well">
+            <fieldset>
+                <legend class="item-name">
+                    <a class="internal" id="project-{{ packageName|replace({'/': '-'}) }}"
+                       href="#{{ packageName|replace({'/': '-'}) }}">{{ packageName }}</a>
+                </legend>
+                {% for packageProject in packageProjects %}
+                    <a
+                    href="{{ directory[packageProject].githubUrl }}">{{ packageProject }}</a>{% if loop.index != packageProjects|length %}, {% endif %}
+                {% endfor %}
+            </fieldset>
+        </div>
+    {% endif %}
+{% endfor %}
