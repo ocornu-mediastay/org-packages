@@ -54,25 +54,13 @@ class OrganizationProjects extends Command\Command
         return $directory;
     }
 
-    protected function execute(Input\InputInterface $input, Output\OutputInterface $output)
+    protected function retrieveProjects($github, $organization, $repositories, Output\OutputInterface $output)
     {
-        $authenticationToken = $input->getArgument('token');
-        $organization = $input->getArgument('organization');
-
-        $github = new \Github\Client();
-        if (!empty($authenticationToken)) {
-            $github->authenticate($authenticationToken, \Github\Client::AUTH_HTTP_TOKEN);
-        }
-
-        $repositories = $github->api('organization')->repositories($organization);
-
-        $text = 'retrieving ' . count($repositories) . ' projects from ' . $organization . ' organization' . PHP_EOL;
-
         $projects = array();
         foreach ($repositories as $repository) {
             $repositoryName = $repository['name'];
 
-            $text .= 'scanning ' . $repositoryName . '... ';
+            $output->write('scanning ' . $repositoryName . '... ');
             try {
                 $composerJsonContent = $github->api('repository')->contents()->download(
                     $organization,
@@ -87,17 +75,32 @@ class OrganizationProjects extends Command\Command
                             $projects[$organization . '/' . $repositoryName][] = $dependency;
                         }
                     }
-                    $text .= 'adding projects';
+                    $output->writeln('adding packages.');
                 }
             } catch (\Github\Exception\RuntimeException $e) {
-                $text .= 'no "composer.json" file found!';
+                $output->writeln('no "composer.json" file found, skipping.');
             }
-            $text .= PHP_EOL;
+        }
+        return $projects;
+    }
+
+    protected function execute(Input\InputInterface $input, Output\OutputInterface $output)
+    {
+        $authenticationToken = $input->getArgument('token');
+        $organization = $input->getArgument('organization');
+
+        $github = new \Github\Client();
+        if (!empty($authenticationToken)) {
+            $github->authenticate($authenticationToken, \Github\Client::AUTH_HTTP_TOKEN);
         }
 
-        $text .= 'building directory ' . PHP_EOL;
+        $repositories = $github->api('organization')->repositories($organization);
 
-        $output->writeln($text);
+        $output->writeln('retrieving ' . count($repositories) . ' projects from ' . $organization . ' organization' . PHP_EOL);
+
+        $projects=$this->retrieveProjects($github, $organization, $repositories,  $output);
+
+        $output->writeln('building directory');
 
         $data = array(
             'directory' => $this->buildDirectory($projects, $organization),
@@ -118,7 +121,7 @@ class OrganizationProjects extends Command\Command
         try {
             $packagist = new \Packagist\Api\Client();
             $package = $packagist->get($packageName);
-            $version = array_pop($package->getVersions());
+            $version = current($package->getVersions());
             $source = $version->getSource();
             $packageData = array(
                 'description' => $package->getDescription(),
