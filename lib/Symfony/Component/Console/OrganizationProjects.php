@@ -2,7 +2,15 @@
 
 namespace Symfony\Component\Console;
 
-class OrganizationProjects extends Command\Command
+use Symfony\Component\Console\Command\Command;
+use Symfony\Component\Console\Input\InputArgument;
+use Symfony\Component\Console\Input\InputInterface;
+use Symfony\Component\Console\Output\OutputInterface;
+use Github\Exception\RuntimeException as GitHubRuntimeException;
+use Guzzle\Http\Exception\ClientErrorResponseException as GuzzleClientException;
+use Packagist\Api\Client as PackagistClient;
+
+class OrganizationProjects extends Command
 {
 
     protected $outputFilePath;
@@ -20,12 +28,12 @@ class OrganizationProjects extends Command\Command
             ->setDescription('Retrieve packages and projects from organization')
             ->addArgument(
                 'organization',
-                Input\InputArgument::REQUIRED,
+                InputArgument::REQUIRED,
                 'name of organization in GitHub to retrieve packages from'
             )
             ->addArgument(
                 'token',
-                Input\InputArgument::OPTIONAL,
+                InputArgument::OPTIONAL,
                 'valid application token'
             );
     }
@@ -54,51 +62,73 @@ class OrganizationProjects extends Command\Command
         return $directory;
     }
 
-    protected function retrieveProjects($github, $organization, $repositories, Output\OutputInterface $output)
+    protected function getDependenciesFromJsonData($output, $index, $githubClient, $organization, $repositoryName)
+    {
+        $dependencies = array();
+        $output->write($index . ' - scanning ' . $repositoryName . '... ');
+        try {
+            $composerJsonData = $this->retrieveComposerJsonData($githubClient, $organization, $repositoryName);
+            if (property_exists($composerJsonData, 'require')) {
+                $dependencies = array_keys((array)$composerJsonData->require);
+                foreach ($dependencies as $dependency) {
+                    if ('php' != $dependency) {
+                        $dependencies[] = $dependency;
+                    }
+                }
+            }
+            $output->writeln('adding packages.');
+            return $dependencies;
+        } catch (GitHubRuntimeException $e) {
+            $output->writeln('no "composer.json" file found, skipping.');
+            return array();
+        }
+    }
+
+    protected function retrieveProjects($githubClient, $organization, $repositories, OutputInterface $output)
     {
         $projects = array();
-        foreach ($repositories as $repository) {
+        foreach ($repositories as $index => $repository) {
             $repositoryName = $repository['name'];
-
-            $output->write('scanning ' . $repositoryName . '... ');
-            try {
-                $composerJsonContent = $github->api('repository')->contents()->download(
-                    $organization,
-                    $repositoryName,
-                    'composer.json'
-                );
-                $composerJsonData = json_decode($composerJsonContent);
-                if (property_exists($composerJsonData, 'require')) {
-                    $dependencies = array_keys((array)$composerJsonData->require);
-                    foreach ($dependencies as $dependency) {
-                        if ('php' != $dependency) {
-                            $projects[$organization . '/' . $repositoryName][] = $dependency;
-                        }
-                    }
-                    $output->writeln('adding packages.');
-                }
-            } catch (\Github\Exception\RuntimeException $e) {
-                $output->writeln('no "composer.json" file found, skipping.');
-            }
+            $dependencies = $this->getDependenciesFromJsonData($output, $index, $githubClient, $organization, $repositoryName);
+            $projects[$organization . '/' . $repositoryName] = $dependencies;
         }
         return $projects;
     }
 
-    protected function execute(Input\InputInterface $input, Output\OutputInterface $output)
+    protected function retrieveComposerJsonData($client, $organization, $repositoryName)
+    {
+        $composerJsonContent = $client->api('repository')->contents()->download(
+            $organization,
+            $repositoryName,
+            'composer.json'
+        );
+        $composerJsonData = json_decode($composerJsonContent);
+
+        return $composerJsonData;
+    }
+
+    protected function retrieveRepositoriesFromOrganization($client, $organization)
+    {
+        $repositories = $client->api('organization')->repositories($organization);
+
+        return $repositories;
+    }
+
+
+    protected function execute(InputInterface $input, OutputInterface $output)
     {
         $authenticationToken = $input->getArgument('token');
         $organization = $input->getArgument('organization');
 
-        $github = new \Github\Client();
+        $githubClient = new \Github\Client();
         if (!empty($authenticationToken)) {
-            $github->authenticate($authenticationToken, \Github\Client::AUTH_HTTP_TOKEN);
+            $githubClient->authenticate($authenticationToken, \Github\Client::AUTH_HTTP_TOKEN);
         }
 
-        $repositories = $github->api('organization')->repositories($organization);
-
+        $repositories = $this->retrieveRepositoriesFromOrganization($githubClient, $organization);
         $output->writeln('retrieving ' . count($repositories) . ' projects from ' . $organization . ' organization' . PHP_EOL);
 
-        $projects=$this->retrieveProjects($github, $organization, $repositories,  $output);
+        $projects = $this->retrieveProjects($githubClient, $organization, $repositories, $output);
 
         $output->writeln('building directory');
 
@@ -119,7 +149,7 @@ class OrganizationProjects extends Command\Command
             return array('githubUrl' => 'https://github.com/' . $packageName);
         }
         try {
-            $packagist = new \Packagist\Api\Client();
+            $packagist = new PackagistClient();
             $package = $packagist->get($packageName);
             $version = current($package->getVersions());
             $source = $version->getSource();
@@ -130,7 +160,7 @@ class OrganizationProjects extends Command\Command
                 'githubUrl' => $source->getUrl()
             );
             return $packageData;
-        } catch (\Guzzle\Http\Exception\ClientErrorResponseException $e) {
+        } catch (GuzzleClientException $e) {
             return array();
         }
     }

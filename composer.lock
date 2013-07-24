@@ -3,7 +3,7 @@
         "This file locks the dependencies of your project to a known state",
         "Read more about it at http://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file"
     ],
-    "hash": "9b0e66da8e2c32764cc16078c2b6e22d",
+    "hash": "6188becd20111afb0e8b2b6a18111db6",
     "packages": [
         {
             "name": "doctrine/inflector",
@@ -271,13 +271,13 @@
             "version": "dev-master",
             "source": {
                 "type": "git",
-                "url": "https://github.com/fmagnan/php-github-api.git",
-                "reference": "8c1a45fd932876063d067180a55dd65eb634a220"
+                "url": "https://github.com/KnpLabs/php-github-api.git",
+                "reference": "8bedcf38330a7bb96dd153018849b3506faf6a62"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/fmagnan/php-github-api/zipball/8c1a45fd932876063d067180a55dd65eb634a220",
-                "reference": "8c1a45fd932876063d067180a55dd65eb634a220",
+                "url": "https://api.github.com/repos/KnpLabs/php-github-api/zipball/8bedcf38330a7bb96dd153018849b3506faf6a62",
+                "reference": "8bedcf38330a7bb96dd153018849b3506faf6a62",
                 "shasum": ""
             },
             "require": {
@@ -296,18 +296,19 @@
                     "Github\\": "lib/"
                 }
             },
+            "notification-url": "https://packagist.org/downloads/",
             "license": [
                 "MIT"
             ],
             "authors": [
                 {
-                    "name": "KnpLabs Team",
-                    "homepage": "http://knplabs.com"
-                },
-                {
                     "name": "Thibault Duplessis",
                     "email": "thibault.duplessis@gmail.com",
                     "homepage": "http://ornicar.github.com"
+                },
+                {
+                    "name": "KnpLabs Team",
+                    "homepage": "http://knplabs.com"
                 }
             ],
             "description": "GitHub API v3 client",
@@ -318,10 +319,7 @@
                 "gist",
                 "github"
             ],
-            "support": {
-                "source": "https://github.com/fmagnan/php-github-api/tree/master"
-            },
-            "time": "2013-05-29 11:56:30"
+            "time": "2013-07-01 14:29:06"
         },
         {
             "name": "knplabs/packagist-api",
@@ -479,24 +477,24 @@
         },
         {
             "name": "symfony/event-dispatcher",
-            "version": "v2.3.1",
+            "version": "v2.3.2",
             "target-dir": "Symfony/Component/EventDispatcher",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/EventDispatcher.git",
-                "reference": "v2.3.1"
+                "reference": "v2.3.2"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/EventDispatcher/zipball/v2.3.1",
-                "reference": "v2.3.1",
+                "url": "https://api.github.com/repos/symfony/EventDispatcher/zipball/v2.3.2",
+                "reference": "v2.3.2",
                 "shasum": ""
             },
             "require": {
                 "php": ">=5.3.3"
             },
             "require-dev": {
-                "symfony/dependency-injection": ">=2.0,<3.0"
+                "symfony/dependency-injection": "~2.0"
             },
             "suggest": {
                 "symfony/dependency-injection": "",
@@ -946,17 +944,17 @@
         },
         {
             "name": "symfony/yaml",
-            "version": "v2.2.3",
+            "version": "v2.2.4",
             "target-dir": "Symfony/Component/Yaml",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/Yaml.git",
-                "reference": "v2.2.3"
+                "reference": "v2.2.4"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/Yaml/zipball/v2.2.3",
-                "reference": "v2.2.3",
+                "url": "https://api.github.com/repos/symfony/Yaml/zipball/v2.2.4",
+                "reference": "v2.2.4",
                 "shasum": ""
             },
             "require": {
@@ -989,7 +987,7 @@
             ],
             "description": "Symfony Yaml Component",
             "homepage": "http://symfony.com",
-            "time": "2013-05-10 18:08:31"
+            "time": "2013-07-11 09:28:01"
         }
     ],
     "aliases": [
