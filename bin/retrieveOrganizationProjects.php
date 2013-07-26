@@ -3,7 +3,7 @@
 require __DIR__ . '/../vendor/autoload.php';
 
 use Symfony\Component\Console\Application;
-use Symfony\Component\Console\OrganizationProjects;
+use Marvin\Console\OrganizationProjects;
 
 $outputConfigFile = __DIR__ . '/../compiled/projects.inc.php';
 
