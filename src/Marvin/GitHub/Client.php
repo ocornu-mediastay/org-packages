@@ -13,6 +13,31 @@ class Client extends \Github\Client
         }
     }
 
+    protected function filterPackages(array $array)
+    {
+        $hash = array();
+        foreach ($array as $item) {
+            if (strpos($item, '/') !== false) {
+                $hash[$item] = $item;
+            }
+        }
+        return $hash;
+    }
+
+    protected function getDependenciesFromJsonData($organization, $repositoryName)
+    {
+        $dependencies = array();
+        try {
+            $composerJsonData = $this->retrieveComposerJsonData($organization, $repositoryName);
+            if (property_exists($composerJsonData, 'require')) {
+                $dependencies = array_keys((array)$composerJsonData->require);
+            }
+            return $dependencies;
+        } catch (GitHubRuntimeException $e) {
+            return array();
+        }
+    }
+
     public function retrieveRepositoriesFromOrganization($organization)
     {
         $repositories = $this->api('organization')->repositories($organization);
@@ -23,34 +48,13 @@ class Client extends \Github\Client
     public function retrieveProjects($organization, $repositories)
     {
         $projects = array();
-        foreach ($repositories as $index => $repository) {
+        foreach ($repositories as $repository) {
             $repositoryName = $repository['name'];
-            $dependencies = $this->getDependenciesFromJsonData($index, $organization, $repositoryName);
+            $dependencies = $this->getDependenciesFromJsonData($organization, $repositoryName);
+            $dependencies = $this->filterPackages($dependencies);
             $projects[$organization . '/' . $repositoryName] = $dependencies;
         }
         return $projects;
-    }
-
-    protected function getDependenciesFromJsonData($index, $organization, $repositoryName)
-    {
-        $dependencies = array();
-        //$output->write($index . ' - scanning ' . $repositoryName . '... ');
-        try {
-            $composerJsonData = $this->retrieveComposerJsonData($organization, $repositoryName);
-            if (property_exists($composerJsonData, 'require')) {
-                $dependencies = array_keys((array)$composerJsonData->require);
-                foreach ($dependencies as $dependency) {
-                    if ('php' != $dependency) {
-                        $dependencies[] = $dependency;
-                    }
-                }
-            }
-            //$output->writeln('adding packages.');
-            return $dependencies;
-        } catch (GitHubRuntimeException $e) {
-            //$output->writeln('no "composer.json" file found, skipping.');
-            return array();
-        }
     }
 
     protected function retrieveComposerJsonData($organization, $repositoryName)

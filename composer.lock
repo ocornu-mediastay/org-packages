@@ -3,7 +3,7 @@
         "This file locks the dependencies of your project to a known state",
         "Read more about it at http://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file"
     ],
-    "hash": "7108c95d82c6cb43ae5dd3bcb4a1d15a",
+    "hash": "3161eb17fc1af1c85147150ea1d3e932",
     "packages": [
         {
             "name": "doctrine/inflector",
@@ -271,13 +271,13 @@
             "version": "dev-master",
             "source": {
                 "type": "git",
-                "url": "https://github.com/KnpLabs/php-github-api.git",
-                "reference": "8bedcf38330a7bb96dd153018849b3506faf6a62"
+                "url": "https://github.com/fmagnan/php-github-api.git",
+                "reference": "8c1a45fd932876063d067180a55dd65eb634a220"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/KnpLabs/php-github-api/zipball/8bedcf38330a7bb96dd153018849b3506faf6a62",
-                "reference": "8bedcf38330a7bb96dd153018849b3506faf6a62",
+                "url": "https://api.github.com/repos/fmagnan/php-github-api/zipball/8c1a45fd932876063d067180a55dd65eb634a220",
+                "reference": "8c1a45fd932876063d067180a55dd65eb634a220",
                 "shasum": ""
             },
             "require": {
@@ -296,19 +296,18 @@
                     "Github\\": "lib/"
                 }
             },
-            "notification-url": "https://packagist.org/downloads/",
             "license": [
                 "MIT"
             ],
             "authors": [
                 {
+                    "name": "KnpLabs Team",
+                    "homepage": "http://knplabs.com"
+                },
+                {
                     "name": "Thibault Duplessis",
                     "email": "thibault.duplessis@gmail.com",
                     "homepage": "http://ornicar.github.com"
-                },
-                {
-                    "name": "KnpLabs Team",
-                    "homepage": "http://knplabs.com"
                 }
             ],
             "description": "GitHub API v3 client",
@@ -319,7 +318,10 @@
                 "gist",
                 "github"
             ],
-            "time": "2013-07-01 14:29:06"
+            "support": {
+                "source": "https://github.com/fmagnan/php-github-api/tree/master"
+            },
+            "time": "2013-05-29 11:56:30"
         },
         {
             "name": "knplabs/packagist-api",

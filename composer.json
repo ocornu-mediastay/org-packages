@@ -7,6 +7,12 @@
         }
     },
     "name": "org-packages",
+    "repositories": [
+        {
+            "type": "vcs",
+            "url": "https://github.com/fmagnan/php-github-api"
+        }
+    ],
     "require": {
         "knplabs/github-api": "dev-master",
         "knplabs/packagist-api": "0.1.*@dev",

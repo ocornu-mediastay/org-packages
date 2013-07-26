@@ -64,7 +64,7 @@ class OrganizationProjects extends Command
 
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-        $this->output=$output;
+        $this->output = $output;
         $authenticationToken = $input->getArgument('token');
         $organization = $input->getArgument('organization');
 
@@ -78,8 +78,16 @@ class OrganizationProjects extends Command
 
         $this->out('building directory');
 
-        $directory = $this->buildDirectory($projects, $output);
-        $data = array('directory' => $directory, 'organization' => $organization, 'projects' => $projects);
+        $this->buildDirectory($projects, $output);
+        $data = array($organization => array('directory' => $this->directory, 'projects' => $projects));
+
+        $compiledFilePath = __DIR__ . '/../../../compiled/projects.inc.php';
+        if (file_exists($compiledFilePath)) {
+            $existingData = include $compiledFilePath;
+            if (is_array($existingData)) {
+                $data = array_merge($existingData, $data);
+            }
+        }
 
         $fileContents = '<?php return ' . trim(var_export($data, true)) . ';';
 
