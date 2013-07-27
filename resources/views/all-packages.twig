@@ -37,9 +37,13 @@
                     {% endif %}
                 </td>
                 <td>
-                    <a href="https://packagist.org/packages/{{ package }}">
-                        <img alt="get it on packagist" src="img/packagist.svg"/>
-                    </a>
+                    {% if directory[package].packagistUrl is empty %}
+                        <span>none</span>
+                    {% else %}
+                        <a href="{{ directory[package].packagistUrl }}">
+                            <img alt="get it on packagist" src="img/packagist.svg"/>
+                        </a>
+                    {% endif %}
                 </td>
             </tr>
         {% endif %}

@@ -24,6 +24,21 @@ class Client extends \Github\Client
         return $hash;
     }
 
+    public function getPackageInfo($packageName)
+    {
+        list($organization, $repository) = explode('/', $packageName);
+        $repositoryInfo = $this->api('repo')->show($organization, $repository);
+        $packageInfo = array(
+            'description' => $repositoryInfo['description'],
+            'homepageUrl' => $repositoryInfo['homepage'],
+            'packagistUrl' => '',
+            'githubUrl' => $repositoryInfo['clone_url']
+        );
+
+        return $packageInfo;
+
+    }
+
     protected function getDependenciesFromJsonData($organization, $repositoryName)
     {
         $dependencies = array();

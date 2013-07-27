@@ -6,6 +6,7 @@
                 <legend class="item-name">
                     <a class="internal" id="project-{{ packageName|replace({'/': '-'}) }}"
                        href="#{{ packageName|replace({'/': '-'}) }}">{{ packageName }}</a>
+                    is used by these projects:
                 </legend>
                 {% for packageProject in packageProjects %}
                     <a
