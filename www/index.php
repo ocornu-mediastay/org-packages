@@ -2,9 +2,9 @@
 
 require __DIR__ . '/../vendor/autoload.php';
 
-function error($twig, $message)
+function error($twig, $message,array $orgs=array())
 {
-    echo $twig->render('error.twig', array('message' => $message));
+    echo $twig->render('error.twig', array('message' => $message,'orgs'=>$orgs));
     exit;
 }
 
@@ -18,19 +18,14 @@ $twig = new Twig_Environment($loader, array(
     'cache' => __DIR__ . '/../compiled/views/cache',
 ));
 
-$compiledFilePath = __DIR__ . '/../compiled/projects.inc.php';
+$compiledFilePath = __DIR__ . '/data/projects.json';
 
 if (!file_exists($compiledFilePath)) {
     error($twig, sprintf('file %s is missing.', $compiledFilePath));
 }
-if (!$selectedOrganization) {
-    error($twig, 'organization is required. Try "org" param in URI');
-}
-$lastModifiedTime = filemtime($compiledFilePath);
-$data = include $compiledFilePath;
-
-if (!isset($data[$selectedOrganization])) {
-    error($twig, sprintf('unable to find data about %s organization.', $selectedOrganization));
+$data = json_decode(file_get_contents($compiledFilePath),true);
+if (!$selectedOrganization || !isset($data[$selectedOrganization])) {
+    error($twig, 'missing valid organization to display, try one of them: ',array_keys($data));
 }
 
 $organizationData = $data[$selectedOrganization];
@@ -44,12 +39,15 @@ foreach ($projects as $project => $projectPackages) {
             $packages[$packageName][] = $project;
         }
     }
+    if(empty($projectPackages)){
+        unset($projects[$project]);
+    }
 }
 ksort($packages);
 
 echo $twig->render('main.twig', array(
     'directory' => $organizationData['directory'],
-    'lastModifiedTime' => $lastModifiedTime,
+    'lastModifiedTime' => filemtime($compiledFilePath),
     'organization' => ucfirst($selectedOrganization),
     'packages' => $packages,
     'projects' => $projects,

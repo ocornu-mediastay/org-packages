@@ -1,4 +1,4 @@
-compiled/projects.inc.php
 compiled/views
-vendor
 .idea
+vendor
+www/data/projects.json

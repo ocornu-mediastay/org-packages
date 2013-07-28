@@ -2,6 +2,7 @@
 
 namespace Marvin\Console;
 
+use Github\Exception\RuntimeException;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
@@ -30,12 +31,17 @@ class OrganizationProjects extends Command
         }
         try {
             $info = $packagistClient->getPackageInfo($packageName);
+            $this->out('adding packagist info on package ' . $packageName);
         } catch (GuzzleClientException $e) {
-            $info = $githubClient->getPackageInfo($packageName);
+            try {
+                $info = $githubClient->getPackageInfo($packageName);
+                $this->out('adding GitHub info on package ' . $packageName);
+            } catch (RuntimeException $e) {
+                $info = array();
+                $this->out(sprintf('Unable to get info about %s from GitHub' , $packageName));
+            }
         }
-
         $this->directory[$packageName] = $info;
-        $this->out('adding packagist info on package ' . $packageName);
     }
 
     protected function buildDirectory($githubClient, array $projects)
@@ -84,17 +90,15 @@ class OrganizationProjects extends Command
         $this->out('building directory');
 
         $this->buildDirectory($githubClient, $projects, $output);
+
         $data = array($organization => array('directory' => $this->directory, 'projects' => $projects));
 
-        $compiledFilePath = __DIR__ . '/../../../compiled/projects.inc.php';
-        if (file_exists($compiledFilePath)) {
-            $existingData = include $compiledFilePath;
-            if (is_array($existingData)) {
-                $data = array_merge($existingData, $data);
-            }
+        if (file_exists($this->outputFilePath)) {
+            $existingData = json_decode(file_get_contents($this->outputFilePath), true);
+            $data = array_merge($existingData, $data);
         }
 
-        $fileContents = '<?php return ' . trim(var_export($data, true)) . ';';
+        $fileContents = json_encode($data);
 
         file_put_contents($this->outputFilePath, $fileContents);
     }

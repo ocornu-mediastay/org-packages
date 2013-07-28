@@ -1,3 +1,7 @@
+h2 {
+    clear:left;
+}
+
 a,a:hover {
     color:#4183C4;
 }
@@ -33,4 +37,15 @@ caption {
     width:400px;
     margin:auto;
     margin-top:100px;
+}
+
+.alert a, .alert a:hover {
+    color:black;
+}
+
+.project-card {
+    width:260px;
+    min-height:280px;
+    float:left;
+    margin-right:10px;
 }

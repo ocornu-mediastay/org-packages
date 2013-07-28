@@ -1,17 +1,19 @@
-<h2 id="packages-by-project">Packages by project</h2>
+<h2 id="packages-by-project">Projects ({{ projects|length }})</h2>
 {% for projectName, projectPackages in projects %}
     {% if projectPackages is not empty %}
-        <div class="well">
-            <fieldset>
-                <legend class="item-name">
-                    <a href="{{ directory[projectName].githubUrl }}">{{ projectName }}</a>
-                    requires all these packages:
-                </legend>
+        <div class="well project-card">
+            <legend class="item-name">
+                <a href="{{ directory[projectName].githubUrl }}">{{ projectName }}</a>
+            </legend>
+            <ul>
                 {% for projectPackage in projectPackages %}
-                    <a class="internal"
-                       href="#{{ projectPackage|replace({'/': '-'}) }}">{{ projectPackage }}</a>{% if loop.index != projectPackages|length %}, {% endif %}
+                    <li>
+                        <a class="internal" href="#{{ projectPackage|replace({'/': '-'}) }}">
+                            {{ projectPackage }}
+                        </a>
+                    </li>
                 {% endfor %}
-            </fieldset>
+            </ul>
         </div>
     {% endif %}
 {% endfor %}

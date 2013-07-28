@@ -1,6 +1,17 @@
 {% extends "main.twig" %}
 {% block content %}
     <div class="alert alert-error">
-        {{  message }}
+        {{ message }}
+        {% if orgs is not empty %}
+            <ul>
+                {% for organization in orgs %}
+                    <li>
+                        <a href="?org={{ organization }}">
+                            {{ organization }}
+                        </a>
+                    </li>
+                {% endfor %}
+            </ul>
+        {% endif %}
     </div>
 {% endblock %}
